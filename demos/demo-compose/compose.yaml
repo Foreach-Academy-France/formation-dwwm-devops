@@ -1,0 +1,48 @@
+# =============================================================================
+# Démo J3 — Bloc 3.5 : web (Node) + db (Postgres 16) + adminer
+#   cp .env.example .env && docker compose up -d --build
+#   → http://localhost:3002  (web)   http://localhost:8081  (adminer)
+# =============================================================================
+name: demo-compose
+
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    environment:                       # lues par l'image postgres au 1er démarrage
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data   # volume nommé : les données survivent au conteneur
+    healthcheck:                       # « prêt à accepter des connexions ? »
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    # pas de « ports: » : la base n'est joignable QUE depuis le réseau de Compose
+
+  web:
+    build: ./app                       # construit l'image depuis app/Dockerfile
+    environment:
+      PORT: 3000
+      # « db » = nom du service : Compose fournit la résolution DNS sur son réseau
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    ports:
+      - "${WEB_PORT:-3002}:3000"       # hôte:conteneur
+    depends_on:
+      db:
+        condition: service_healthy     # attendre que Postgres soit VRAIMENT prêt
+    restart: unless-stopped
+
+  adminer:
+    image: docker.io/library/adminer:4
+    environment:
+      ADMINER_DEFAULT_SERVER: db       # pré-remplit le champ « Serveur »
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    depends_on:
+      - db
+
+volumes:
+  db-data:

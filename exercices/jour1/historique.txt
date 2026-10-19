@@ -1,0 +1,10 @@
+* 93db9eb (feature/docker) build(api): ajoute un Dockerfile
+* fd16415 (HEAD -> main, tag: v1.0.0, fix/titre-page) fix(front): corrige le titre de la page
+*   3b7627e Merge branch 'feature/health'
+|\  
+| * 24df34a (feature/health) test(api): teste la route /health
+| * f1f8d16 feat(api): ajoute la route GET /health
+* | 057cd1f chore: ajoute le .gitignore
+|/  
+* 8f17968 feat(api): crée l'application Express
+* 20bc9b4 chore: initialise le projet TaskFlow

@@ -1,0 +1,16 @@
+{
+  "name": "demo-compose-web",
+  "version": "1.0.0",
+  "description": "Compteur de visites stocké dans Postgres — démo Docker Compose",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,9 @@
+# docker compose -p taskflow-prod logs proxy --since 2026-10-22T00:00:00 (journal d'erreurs, extrait)
+2026/10/22 03:12:44 [info] 29#29: *8812 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 172.18.0.1, server: 0.0.0.0:443
+2026/10/22 07:55:01 [notice] 1#1: signal 1 (SIGHUP) received from 61, reconfiguring
+2026/10/22 07:55:01 [notice] 1#1: reconfiguring
+2026/10/22 07:55:01 [notice] 1#1: using the "epoll" event method
+2026/10/22 07:55:01 [notice] 1#1: start worker processes
+2026/10/22 07:55:01 [notice] 1#1: start worker process 70
+2026/10/22 07:55:01 [notice] 1#1: gracefully shutting down
+2026/10/22 07:55:01 [notice] 29#29: exiting

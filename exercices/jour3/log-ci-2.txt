@@ -1,0 +1,72 @@
+Run CI #57 — test(api): ajoute un test d'intégration sur toggle (#24)
+Workflow: .github/workflows/ci.yml   Event: pull_request   Branch: feature/test-toggle
+Job: api (ubuntu-latest)
+
+2026-10-21T14:02:11.2041197Z ##[group]Initialize containers
+2026-10-21T14:02:11.2052934Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-10-21T14:02:11.4317840Z '1.47'
+2026-10-21T14:02:11.4410152Z ##[command]/usr/bin/docker network create --label 1c5e8a github_network_3e6f0b9d2a4c4f6e
+2026-10-21T14:02:11.5562013Z ##[command]/usr/bin/docker pull postgres:16-alpine
+2026-10-21T14:02:14.8803411Z Status: Downloaded newer image for postgres:16-alpine
+2026-10-21T14:02:14.8869920Z ##[command]/usr/bin/docker create --name 5a0d2f7c_postgres16alpine_8e1b --label 1c5e8a --network github_network_3e6f0b9d2a4c4f6e --network-alias postgres --health-cmd "pg_isready -U taskflow" --health-interval 5s --health-timeout 3s --health-retries 10 -e "POSTGRES_USER=taskflow" -e "POSTGRES_PASSWORD=taskflow" -e "POSTGRES_DB=taskflow" postgres:16-alpine
+2026-10-21T14:02:15.0102226Z ##[command]/usr/bin/docker start 9f3a6c1e2b7d
+2026-10-21T14:02:15.5139010Z postgres service is starting, waiting 2 seconds before checking health
+2026-10-21T14:02:17.5521780Z postgres service is healthy.
+2026-10-21T14:02:17.5530041Z ##[endgroup]
+2026-10-21T14:02:17.6120338Z ##[group]Run actions/checkout@v4
+2026-10-21T14:02:18.4472901Z HEAD is now at b41d9e0 Merge 6c0f3a2 into 9a8e2c7
+2026-10-21T14:02:18.4510007Z ##[endgroup]
+2026-10-21T14:02:18.4733018Z ##[group]Run actions/setup-node@v4
+2026-10-21T14:02:18.7120995Z node: v20.18.0
+2026-10-21T14:02:18.7121442Z npm: 10.8.2
+2026-10-21T14:02:18.9883104Z Cache restored successfully
+2026-10-21T14:02:18.9891230Z ##[endgroup]
+2026-10-21T14:02:19.0021407Z ##[group]Run npm ci
+2026-10-21T14:02:24.6670512Z added 287 packages, and audited 288 packages in 5s
+2026-10-21T14:02:24.6671104Z found 0 vulnerabilities
+2026-10-21T14:02:24.6788720Z ##[endgroup]
+2026-10-21T14:02:24.6901055Z ##[group]Run npm run lint
+2026-10-21T14:02:26.1123447Z > taskflow-api@1.0.0 lint
+2026-10-21T14:02:26.1123901Z > eslint src tests
+2026-10-21T14:02:27.9012336Z ##[endgroup]
+2026-10-21T14:02:27.9120017Z ##[group]Run npm test
+2026-10-21T14:02:28.3307612Z > taskflow-api@1.0.0 test
+2026-10-21T14:02:28.3308050Z > vitest run tests/app.test.js
+2026-10-21T14:02:29.6610241Z  ✓ tests/app.test.js (9 tests) 41ms
+2026-10-21T14:02:29.6650114Z  Test Files  1 passed (1)
+2026-10-21T14:02:29.6650512Z       Tests  9 passed (9)
+2026-10-21T14:02:29.6812207Z ##[endgroup]
+2026-10-21T14:02:29.6920311Z ##[group]Run npm run test:int
+2026-10-21T14:02:29.6920788Z npm run test:int
+2026-10-21T14:02:29.6921122Z shell: /usr/bin/bash -e {0}
+2026-10-21T14:02:29.6921431Z env:
+2026-10-21T14:02:29.6921790Z   DATABASE_URL: postgres://taskflow:taskflow@localhost:5432/taskflow
+2026-10-21T14:02:29.6922113Z ##[endgroup]
+2026-10-21T14:02:30.1012870Z > taskflow-api@1.0.0 test:int
+2026-10-21T14:02:30.1013307Z > vitest run tests/db.int.test.js
+2026-10-21T14:02:30.9921037Z
+2026-10-21T14:02:30.9921538Z  RUN  v2.1.4 /home/runner/work/taskflow/taskflow/api
+2026-10-21T14:02:30.9921811Z
+2026-10-21T14:02:31.0844120Z  ❯ tests/db.int.test.js (4 tests | 4 failed) 112ms
+2026-10-21T14:02:31.0844630Z    × postgres repository > create puis list renvoie la tâche 31ms
+2026-10-21T14:02:31.0845002Z    × postgres repository > toggle inverse done 4ms
+2026-10-21T14:02:31.0845377Z    × postgres repository > remove supprime la tâche 3ms
+2026-10-21T14:02:31.0845741Z    × postgres repository > ping renvoie true 3ms
+2026-10-21T14:02:31.0911288Z
+2026-10-21T14:02:31.0911730Z ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+2026-10-21T14:02:31.0912105Z
+2026-10-21T14:02:31.0912418Z  FAIL  tests/db.int.test.js > postgres repository
+2026-10-21T14:02:31.0912874Z Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-10-21T14:02:31.0913297Z  ❯ node_modules/pg-pool/index.js:45:11
+2026-10-21T14:02:31.0913701Z  ❯ migrate src/db.js:14:3
+2026-10-21T14:02:31.0914099Z  ❯ tests/db.int.test.js:11:5
+2026-10-21T14:02:31.0914430Z
+2026-10-21T14:02:31.0914822Z ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+2026-10-21T14:02:31.0915133Z
+2026-10-21T14:02:31.0915472Z  Test Files  1 failed (1)
+2026-10-21T14:02:31.0915790Z       Tests  4 failed (4)
+2026-10-21T14:02:31.0916103Z    Start at  14:02:30
+2026-10-21T14:02:31.0916418Z    Duration  1.02s
+2026-10-21T14:02:31.1210441Z ##[error]Process completed with exit code 1.
+2026-10-21T14:02:31.1388207Z ##[group]Stop and remove containers
+2026-10-21T14:02:31.4410981Z ##[endgroup]

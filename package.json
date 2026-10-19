@@ -1,0 +1,28 @@
+{
+  "name": "formation-dwwm-devops",
+  "version": "1.0.0",
+  "description": "Formation de 4 jours (28h) DevOps pour le titre professionnel DWWM : culture DevOps, Git collaboratif, Docker, GitHub Actions, déploiement sur serveur Linux et supervision",
+  "scripts": {
+    "slides": "marp --input-dir slides --output dist",
+    "slides:watch": "marp --input-dir slides --output dist --watch",
+    "slides:server": "marp --input-dir slides --server",
+    "build": "marp --input-dir slides --output dist --html"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.0.0"
+  },
+  "keywords": [
+    "formation",
+    "dwwm",
+    "devops",
+    "git",
+    "docker",
+    "docker-compose",
+    "github-actions",
+    "ci-cd",
+    "nginx",
+    "teaching"
+  ],
+  "author": "Fabrice Claeys",
+  "license": "MIT"
+}

@@ -1,0 +1,21 @@
+{"time":"2026-10-22T07:31:13.204Z","level":"info","method":"GET","path":"/api/tasks","status":200,"ms":9}
+{"time":"2026-10-22T07:35:40.611Z","level":"info","method":"POST","path":"/api/tasks","status":201,"ms":14}
+{"time":"2026-10-22T07:38:02.017Z","level":"info","method":"GET","path":"/health","status":200,"ms":3}
+{"time":"2026-10-22T07:41:27.388Z","level":"error","message":"erreur base de données","route":"POST /api/tasks","err":"could not extend file \"base/16384/16390\": No space left on device","code":"53100"}
+{"time":"2026-10-22T07:41:27.389Z","level":"info","method":"POST","path":"/api/tasks","status":500,"ms":22}
+{"time":"2026-10-22T07:41:35.902Z","level":"error","message":"erreur base de données","route":"POST /api/tasks","err":"could not extend file \"base/16384/16390\": No space left on device","code":"53100"}
+{"time":"2026-10-22T07:41:35.903Z","level":"info","method":"POST","path":"/api/tasks","status":500,"ms":19}
+{"time":"2026-10-22T07:42:10.144Z","level":"error","message":"erreur base de données","route":"PATCH /api/tasks/:id/toggle","err":"could not write to file \"pg_wal/xlogtemp.88\": No space left on device","code":"53100"}
+{"time":"2026-10-22T07:42:10.145Z","level":"info","method":"PATCH","path":"/api/tasks/12/toggle","status":500,"ms":17}
+{"time":"2026-10-22T07:42:11.020Z","level":"info","method":"GET","path":"/api/tasks","status":200,"ms":8}
+{"time":"2026-10-22T07:43:02.011Z","level":"info","method":"GET","path":"/health","status":200,"ms":2}
+{"time":"2026-10-22T07:46:58.771Z","level":"error","message":"erreur base de données","route":"POST /api/tasks","err":"terminating connection because of crash of another server process","code":"57P02"}
+{"time":"2026-10-22T07:46:58.772Z","level":"info","method":"POST","path":"/api/tasks","status":500,"ms":11}
+{"time":"2026-10-22T07:48:02.008Z","level":"warn","message":"ping base de données échoué","err":"connect ECONNREFUSED 172.19.0.2:5432"}
+{"time":"2026-10-22T07:48:02.009Z","level":"info","method":"GET","path":"/health","status":503,"ms":4}
+{"time":"2026-10-22T07:48:16.330Z","level":"error","message":"erreur base de données","route":"GET /api/tasks","err":"connect ECONNREFUSED 172.19.0.2:5432","code":"ECONNREFUSED"}
+{"time":"2026-10-22T07:48:16.331Z","level":"info","method":"GET","path":"/api/tasks","status":500,"ms":3}
+{"time":"2026-10-22T07:49:30.551Z","level":"error","message":"erreur base de données","route":"GET /api/tasks","err":"connect ECONNREFUSED 172.19.0.2:5432","code":"ECONNREFUSED"}
+{"time":"2026-10-22T07:49:30.552Z","level":"info","method":"GET","path":"/api/tasks","status":500,"ms":2}
+{"time":"2026-10-22T07:53:02.010Z","level":"warn","message":"ping base de données échoué","err":"connect ECONNREFUSED 172.19.0.2:5432"}
+{"time":"2026-10-22T07:53:02.011Z","level":"info","method":"GET","path":"/health","status":503,"ms":3}

@@ -1,0 +1,84 @@
+# =============================================================================
+# Démo J3 — Bloc 4.1 : premier workflow GitHub Actions
+# À copier dans un dépôt de test : .github/workflows/hello.yml
+#
+# Vocabulaire :
+#   workflow = ce fichier (un processus automatisé)
+#   événement = ce qui le déclenche (on:)
+#   job      = un groupe d'étapes exécuté sur UNE machine (runner)
+#   step     = une commande (run:) ou une action réutilisable (uses:)
+#   runner   = la machine qui exécute le job (ici une VM Ubuntu fournie par GitHub)
+# =============================================================================
+
+name: Hello DevOps                      # nom affiché dans l'onglet « Actions »
+
+on:                                     # ÉVÉNEMENTS déclencheurs
+  push:
+    branches: [main]                    # à chaque push sur main
+  pull_request:                         # à chaque PR (ouverte ou mise à jour)
+  workflow_dispatch:                    # bouton « Run workflow » dans l'onglet Actions
+    inputs:
+      prenom:
+        description: "Votre prénom"
+        required: false
+        default: "la promo DWWM"
+  # schedule:                           # (aperçu) tous les lundis à 6 h UTC
+  #   - cron: "0 6 * * 1"
+
+permissions:
+  contents: read                        # moindre privilège : lecture seule du dépôt
+
+env:                                    # variables disponibles dans TOUS les jobs
+  APP_NAME: TaskFlow
+
+jobs:
+  hello:                                # identifiant du job (libre)
+    name: Dire bonjour                  # nom affiché
+    runs-on: ubuntu-latest              # runner hébergé par GitHub
+    steps:
+      - name: Afficher un message
+        run: echo "Bonjour ${{ inputs.prenom || 'la promo DWWM' }} 👋"
+
+      - name: Qui m'a déclenché ?
+        run: |
+          echo "Événement   : ${{ github.event_name }}"
+          echo "Dépôt       : ${{ github.repository }}"
+          echo "Branche/ref : ${{ github.ref_name }}"
+          echo "Commit      : ${{ github.sha }}"
+          echo "Auteur      : ${{ github.actor }}"
+
+      - name: Sur quelle machine suis-je ?
+        run: |
+          uname -a
+          cat /etc/os-release | head -n 2
+          node --version
+          docker --version
+          echo "Application : $APP_NAME"
+
+      - name: Récupérer le code du dépôt
+        uses: actions/checkout@v4        # une ACTION : du code réutilisable publié sur GitHub
+
+      - name: Lister les fichiers du dépôt
+        run: ls -la
+
+      - name: Calculer une version courte
+        id: version                      # id = pour réutiliser la sortie plus loin
+        run: echo "court=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Écrire un résumé dans la page du run
+        run: |
+          echo "### Hello DevOps ✅" >> "$GITHUB_STEP_SUMMARY"
+          echo "Version : \`${{ steps.version.outputs.court }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+  tests:
+    name: Faux tests
+    runs-on: ubuntu-latest
+    needs: hello                         # attend la réussite du job « hello » (sinon : en parallèle)
+    steps:
+      - name: Lancer les « tests »
+        run: |
+          echo "Tests en cours…"
+          sleep 3
+          echo "3 tests OK"
+          # Décommentez la ligne suivante pour voir un job ÉCHOUER (code de sortie ≠ 0) :
+          # exit 1

@@ -1,0 +1,33 @@
+# =============================================================================
+# Runner self-hosted GitHub Actions — lab TaskFlow
+#   cp .env.example .env   puis renseigner REPO_URL, RUNNER_TOKEN, DEPLOY_DIR
+#   docker compose up -d --build
+# =============================================================================
+name: taskflow-runner
+
+services:
+  runner:
+    build: .
+    image: taskflow-dwwm-runner:latest
+    container_name: taskflow-runner
+    env_file: .env
+    environment:
+      RUNNER_SCOPE: repo
+      RUNNER_NAME: ${RUNNER_NAME:-lab-runner}
+      LABELS: ${LABELS:-self-hosted,lab}
+      RUNNER_WORKDIR: /tmp/runner/work
+      DISABLE_AUTO_UPDATE: "1"
+      DEPLOY_DIR: ${DEPLOY_DIR:?Renseignez DEPLOY_DIR dans .env}   # lu par les jobs : $DEPLOY_DIR
+    volumes:
+      # Le runner pilote le Docker de VOTRE poste via ce socket (il ne lance pas
+      # son propre Docker). Podman rootless : voir README.md, section « Podman ».
+      - /var/run/docker.sock:/var/run/docker.sock
+      # MÊME chemin dans le conteneur et sur le poste. Pourquoi ? Quand le runner
+      # exécute « docker compose up », c'est le daemon Docker du POSTE qui lit les
+      # chemins de volumes (./nginx/…, ./certs/…). Si le chemin n'existe pas à
+      # l'identique sur le poste, Docker monterait un dossier vide.
+      - ${DEPLOY_DIR}:${DEPLOY_DIR}
+      - ./work:/tmp/runner/work
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # le smoke test joint le proxy publié sur le poste
+    restart: unless-stopped

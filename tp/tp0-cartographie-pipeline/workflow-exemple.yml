@@ -1,0 +1,109 @@
+# ============================================================================
+# workflow-exemple.yml : un workflow GitHub Actions « réel », commenté.
+#
+# Contexte : le site vitrine d'une petite entreprise (HTML/CSS/JavaScript construit
+# avec Vite). Ce fichier vivrait dans le dépôt sous .github/workflows/site.yml.
+#
+# TP 0 : vous ne l'écrivez pas, vous le LISEZ et vous répondez aux questions de
+# l'énoncé (README.md). Les numéros de ligne sont ceux affichés par VS Code.
+# ============================================================================
+
+# Nom du workflow, affiché dans l'onglet « Actions » du dépôt
+name: Site vitrine
+
+# ---------- QUAND le workflow démarre-t-il ? (les « déclencheurs ») -----------
+on:
+  push:
+    branches: [main]        # quand du code arrive sur la branche main
+  pull_request:             # quand une Pull Request est ouverte ou mise à jour
+  workflow_dispatch:        # quand quelqu'un clique sur « Run workflow » (manuel)
+
+# Droits du jeton automatique de GitHub : lecture seule du code, rien d'autre
+permissions:
+  contents: read
+
+jobs:
+  # ---------- Job 1 : vérifier le code ----------------------------------------
+  verifier:
+    name: Lint et tests
+    runs-on: ubuntu-latest  # OÙ : une machine Linux neuve, fournie par GitHub
+    steps:
+      # Récupère le code du dépôt sur la machine
+      - uses: actions/checkout@v4
+
+      # Installe Node.js 20 et garde en cache les paquets npm (plus rapide la fois suivante)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Installe les dépendances exactement comme décrit dans package-lock.json
+      - run: npm ci
+
+      # Analyse statique du code (erreurs, mauvaises pratiques)
+      - run: npm run lint
+
+      # Tests automatisés : si un seul test échoue, le job s'arrête en rouge
+      - run: npm test
+
+  # ---------- Job 2 : construire le site ---------------------------------------
+  construire:
+    name: Build
+    needs: verifier         # attend que « verifier » soit VERT ; sinon, ce job est sauté
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      # Produit le dossier dist/ : le site prêt à être mis en ligne
+      - run: npm run build
+
+      # Garde dist/ comme « artefact » (un fichier produit par le pipeline) pour le job suivant.
+      # On déploiera EXACTEMENT ce qui a été construit et testé ici.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist/
+          retention-days: 7
+
+  # ---------- Job 3 : mettre en ligne ------------------------------------------
+  deployer:
+    name: Déploiement
+    needs: construire
+    # Seulement pour un push sur main : jamais pour une Pull Request
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Environnement GitHub « production » : historique des déploiements, et
+    # éventuellement une approbation humaine obligatoire avant de continuer
+    environment: production
+    steps:
+      # Récupère l'artefact produit par le job « construire »
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      # Copie le site sur le serveur avec rsync, à travers une connexion SSH (Secure Shell) chiffrée.
+      # La clé privée est un SECRET (Settings > Secrets) : elle n'apparaît jamais dans le code.
+      # L'adresse du serveur est une VARIABLE (Settings > Variables) : elle n'est pas secrète.
+      - name: Envoyer le site sur le serveur
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ vars.SERVER_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+          rsync -az --delete -e "ssh -i ~/.ssh/id_deploy" dist/ "deploy@$SERVER_HOST:/var/www/site/"
+
+      # « Smoke test » (test de fumée) : le site répond-il vraiment après la mise en ligne ?
+      # -f : échoue si le code HTTP est une erreur ; --retry 5 : réessaie 5 fois
+      - name: Vérifier que le site répond
+        env:
+          SERVER_HOST: ${{ vars.SERVER_HOST }}
+        run: curl -fsS --retry 5 --retry-all-errors "https://$SERVER_HOST/" > /dev/null

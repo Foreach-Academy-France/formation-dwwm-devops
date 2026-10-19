@@ -1,0 +1,7 @@
+$ cd ~/taskflow-prod
+$ docker compose -p taskflow-prod ps
+NAME                    IMAGE                                       COMMAND                  SERVICE   CREATED       STATUS                          PORTS
+taskflow-prod-api-1     ghcr.io/alice-dwwm/taskflow-api:4e7a1c2     "docker-entrypoint.s…"   api       2 days ago    Up 2 days (unhealthy)           3000/tcp
+taskflow-prod-db-1      docker.io/library/postgres:16-alpine        "docker-entrypoint.s…"   db        2 days ago    Restarting (1) 8 seconds ago
+taskflow-prod-front-1   ghcr.io/alice-dwwm/taskflow-front:4e7a1c2   "/docker-entrypoint.…"   front     2 days ago    Up 2 days (healthy)             80/tcp
+taskflow-prod-proxy-1   docker.io/library/nginx:1.27-alpine         "/docker-entrypoint.…"   proxy     2 days ago    Up 2 days                       0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp

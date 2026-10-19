@@ -1,0 +1,13 @@
+# Ce qui ne doit JAMAIS partir dans le contexte de build
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+Dockerfile*
+.dockerignore
+README.md
+notes/
+*.mp4

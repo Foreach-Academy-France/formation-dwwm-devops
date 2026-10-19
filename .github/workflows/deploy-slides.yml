@@ -1,0 +1,366 @@
+name: Deploy Slides to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Slides
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Marp CLI
+        run: bun add -g @marp-team/marp-cli
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended fonts-noto-color-emoji
+
+      - name: Create output directories
+        run: |
+          mkdir -p public/slides
+          mkdir -p public/pdf
+          mkdir -p public/tp-pdf
+
+      - name: Build HTML slides
+        run: |
+          for slide in slides/*.md; do
+            echo "Building $(basename $slide)..."
+            marp "$slide" --html --allow-local-files -o "public/slides/$(basename $slide .md).html"
+          done
+
+      - name: Build PDF slides
+        run: |
+          for slide in slides/*.md; do
+            echo "Building PDF for $(basename $slide)..."
+            marp "$slide" --html --allow-local-files --pdf -o "public/pdf/$(basename $slide .md).pdf"
+          done
+
+      - name: Build TP & exercices PDFs
+        run: |
+          # Un PDF par énoncé : TP0, TP1, étapes du fil rouge, exercices de chaque jour
+          # (les fichiers de solutions ne sont pas convertis en PDF).
+          for doc in tp/README.md tp/tp*/README.md tp/fil-rouge-taskflow/README.md tp/fil-rouge-taskflow/etape*.md \
+                     exercices/jour*/*.md ressources/cheatsheet-*.md ressources/setup-poste.md evaluation/mise-en-situation.md; do
+            [ -f "$doc" ] || continue
+            case "$doc" in *solution*) continue ;; esac
+            case "$doc" in
+              tp/README.md)                    name="tp-overview" ;;
+              tp/fil-rouge-taskflow/README.md) name="fil-rouge-taskflow" ;;
+              */README.md)                     name="$(basename "$(dirname "$doc")")" ;;
+              exercices/*)                     name="exercices-$(basename "$(dirname "$doc")")-$(basename "$doc" .md)" ;;
+              *)                               name="$(basename "$doc" .md)" ;;
+            esac
+            echo "Generating PDF for $doc -> $name.pdf ..."
+            pandoc "$doc" \
+              -o "public/tp-pdf/${name}.pdf" \
+              --pdf-engine=xelatex \
+              --resource-path="$(dirname "$doc")" \
+              -V geometry:margin=2cm \
+              -V documentclass=article \
+              -V fontsize=11pt \
+              -V mainfont="DejaVu Sans" \
+              -V monofont="DejaVu Sans Mono" \
+              -V colorlinks=true \
+              --toc \
+              --highlight-style=tango || echo "::warning::PDF failed for $doc"
+          done
+
+      - name: Copy additional files
+        run: |
+          # NB : evaluation/qcm-corrige.md est gitignoré → absent du checkout → jamais publié
+          for dir in tp exercices evaluation ressources demos; do
+            [ -d "$dir" ] && cp -r "$dir" public/
+          done
+          cp README.md plan-cours.md public/
+
+      - name: Create index.html
+        run: |
+          cat > public/index.html << 'HTML'
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Formation DWWM DevOps | ForEach Academy</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                      line-height: 1.6; color: #333;
+                      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+                      min-height: 100vh; padding: 2rem 1rem;
+                  }
+                  .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 3rem 2rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+                  header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 3px solid #2563eb; }
+                  h1 { color: #2563eb; font-size: 2.5rem; margin-bottom: 0.5rem; }
+                  .icon { font-size: 3rem; margin-bottom: 1rem; }
+                  .subtitle { color: #666; font-size: 1.2rem; }
+                  .info { background: #f7f7f7; padding: 1.5rem; border-radius: 10px; margin: 2rem 0; }
+                  .info p { margin: 0.5rem 0; }
+                  .section { margin: 2rem 0; }
+                  .section h2 { color: #1e3a8a; margin-bottom: 1rem; font-size: 1.8rem; }
+                  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+                  .card { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 1.5rem; transition: all 0.3s ease; }
+                  .card:hover { border-color: #2563eb; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2); }
+                  .card h3 { color: #2563eb; margin-bottom: 0.5rem; }
+                  .card p { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+                  .links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+                  .btn { display: inline-block; padding: 0.5rem 1rem; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; font-size: 0.9rem; transition: background 0.3s ease; }
+                  .btn:hover { background: #1e3a8a; }
+                  .btn-secondary { background: #0ea5e9; }
+                  .btn-secondary:hover { background: #0369a1; }
+                  .btn-pdf { background: #4a5568; }
+                  .btn-pdf:hover { background: #2d3748; }
+                  footer { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e0e0e0; color: #666; }
+                  .day-separator { background: linear-gradient(90deg, #2563eb 0%, #1e3a8a 100%); color: white; padding: 1rem; border-radius: 10px; margin: 2rem 0; text-align: center; font-size: 1.3rem; font-weight: bold; }
+                  .project-highlight { background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: white; padding: 2rem; border-radius: 15px; margin: 2rem 0; }
+                  .project-highlight h3 { color: white; margin-bottom: 1rem; }
+                  .project-highlight p { color: #dbeafe; }
+                  .project-highlight .stack { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+                  .project-highlight .stack span { background: rgba(255, 255, 255, 0.2); padding: 0.3rem 0.8rem; border-radius: 5px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.3); }
+                  .chain { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1.5rem 0; font-weight: bold; color: #1e3a8a; }
+                  .chain span { background: #eff6ff; border: 1px solid #2563eb; padding: 0.4rem 0.9rem; border-radius: 20px; }
+                  @media (max-width: 600px) { h1 { font-size: 1.8rem; } .container { padding: 2rem 1rem; } }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <header>
+                      <div class="icon">🐳 🚀</div>
+                      <h1>Formation DevOps — DWWM</h1>
+                      <p class="subtitle">Git · Docker · GitHub Actions · Nginx · Déploiement | ForEach Academy - Titre pro Développeur Web et Web Mobile</p>
+                  </header>
+
+                  <div class="info">
+                      <p><strong>📅 Durée :</strong> 4 jours (28h) — dates à confirmer</p>
+                      <p><strong>👨‍🏫 Formateur :</strong> Fabrice Claeys</p>
+                      <p><strong>🎯 Objectif :</strong> Conteneuriser une application web, automatiser ses tests et son déploiement, la mettre en production et la superviser</p>
+                      <p><strong>📋 Prérequis :</strong> HTML/CSS/JavaScript, une application web (PHP, Node.js…), bases de Git et de Linux</p>
+                      <p><strong>📄 Documents :</strong> <a href="README.md">README</a> · <a href="plan-cours.md">Plan de cours détaillé</a></p>
+                  </div>
+
+                  <div class="chain">
+                      <span>code</span><span>→</span><span>pull request</span><span>→</span><span>tests</span><span>→</span><span>image Docker</span><span>→</span><span>déploiement</span><span>→</span><span>supervision</span>
+                  </div>
+
+                  <div class="project-highlight">
+                      <h3>🚀 Projet fil rouge : TaskFlow</h3>
+                      <p>Un gestionnaire de tâches (front Vite + API Express + PostgreSQL) que vous faites passer de « ça marche sur ma machine » à « déployé automatiquement en HTTPS à chaque merge ».</p>
+                      <div class="stack">
+                          <span>Git &amp; GitHub</span>
+                          <span>Docker</span>
+                          <span>Docker Compose</span>
+                          <span>PostgreSQL</span>
+                          <span>GitHub Actions</span>
+                          <span>ghcr.io</span>
+                          <span>Nginx</span>
+                          <span>Uptime Kuma</span>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <div class="day-separator">📅 Jour 1 - Culture DevOps &amp; Git collaboratif</div>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>Slides du jour 1</h3>
+                              <p>Histoire du DevOps • Cycle de vie • CI / livraison / déploiement continus • Panorama des outils • Branches, merge, Pull Request, revue de code, conflits</p>
+                              <div class="links">
+                                  <a href="slides/jour1-devops-git.html" class="btn">🖥️ Slides HTML</a>
+                                  <a href="pdf/jour1-devops-git.pdf" class="btn btn-pdf">📄 PDF</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>TP du jour 1</h3>
+                              <p>TP0 : cartographie d'un pipeline (étude de cas) • TP1 : projet collaboratif en équipe (branches, PR, revue, conflit)</p>
+                              <div class="links">
+                                  <a href="tp/tp0-cartographie-pipeline/README.md" class="btn btn-secondary">📝 TP0</a>
+                                  <a href="tp-pdf/tp0-cartographie-pipeline.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="tp/tp1-git-collaboratif/README.md" class="btn btn-secondary">📝 TP1</a>
+                                  <a href="tp-pdf/tp1-git-collaboratif.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="exercices/jour1/README.md" class="btn btn-secondary">🏋️ Exercices</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <div class="day-separator">📅 Jour 2 - Git (fin) &amp; Docker</div>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>Slides du jour 2</h3>
+                              <p>Rebase • Versioning SemVer, tags, releases • Virtualisation vs conteneurs • Images • Dockerfile • Volumes, réseaux, variables d'environnement</p>
+                              <div class="links">
+                                  <a href="slides/jour2-git-docker.html" class="btn">🖥️ Slides HTML</a>
+                                  <a href="pdf/jour2-git-docker.pdf" class="btn btn-pdf">📄 PDF</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>Fil rouge — Étape 1</h3>
+                              <p>Dockeriser TaskFlow : PostgreSQL en conteneur, Dockerfile de l'API, Dockerfile multi-stage du front</p>
+                              <div class="links">
+                                  <a href="tp/fil-rouge-taskflow/etape1-docker.md" class="btn btn-secondary">📝 Étape 1</a>
+                                  <a href="tp-pdf/etape1-docker.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="exercices/jour2/README.md" class="btn btn-secondary">🏋️ Exercices</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <div class="day-separator">📅 Jour 3 - Docker Compose &amp; intégration continue</div>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>Slides du jour 3</h3>
+                              <p>Docker Compose • Base de données conteneurisée • GitHub Actions : workflows YAML, déclencheurs, jobs • Lint, tests, build • Secrets, variables • Images sur ghcr.io</p>
+                              <div class="links">
+                                  <a href="slides/jour3-compose-ci.html" class="btn">🖥️ Slides HTML</a>
+                                  <a href="pdf/jour3-compose-ci.pdf" class="btn btn-pdf">📄 PDF</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>Fil rouge — Étapes 2 et 3</h3>
+                              <p>Environnement complet avec Docker Compose • Pipeline CI : vérification de chaque PR, publication des images</p>
+                              <div class="links">
+                                  <a href="tp/fil-rouge-taskflow/etape2-compose.md" class="btn btn-secondary">📝 Étape 2</a>
+                                  <a href="tp-pdf/etape2-compose.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="tp/fil-rouge-taskflow/etape3-ci.md" class="btn btn-secondary">📝 Étape 3</a>
+                                  <a href="tp-pdf/etape3-ci.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="exercices/jour3/README.md" class="btn btn-secondary">🏋️ Exercices</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <div class="day-separator">📅 Jour 4 - Déploiement, automatisation &amp; supervision</div>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>Slides du jour 4</h3>
+                              <p>Serveur Linux &amp; SSH (théorie) • Nginx reverse proxy • HTTPS • Sauvegardes • Déploiement continu • Logs, monitoring, gestion des erreurs • Bonnes pratiques</p>
+                              <div class="links">
+                                  <a href="slides/jour4-deploiement-supervision.html" class="btn">🖥️ Slides HTML</a>
+                                  <a href="pdf/jour4-deploiement-supervision.pdf" class="btn btn-pdf">📄 PDF</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>Fil rouge — Étapes 4 et 5</h3>
+                              <p>Déploiement manuel puis automatique sur le serveur • Analyse d'un incident de déploiement et post-mortem</p>
+                              <div class="links">
+                                  <a href="tp/fil-rouge-taskflow/etape4-deploiement.md" class="btn btn-secondary">📝 Étape 4</a>
+                                  <a href="tp-pdf/etape4-deploiement.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="tp/fil-rouge-taskflow/etape5-incident.md" class="btn btn-secondary">📝 Étape 5</a>
+                                  <a href="tp-pdf/etape5-incident.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="exercices/jour4/README.md" class="btn btn-secondary">🏋️ Exercices</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <h2>📝 Évaluation</h2>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>Mise en situation (certificative)</h3>
+                              <p>Dockerfile, Compose, dépôt GitHub, workflow, déploiement automatique, documentation, présentation du pipeline — 100 points</p>
+                              <div class="links">
+                                  <a href="evaluation/mise-en-situation.md" class="btn">🎯 Consigne</a>
+                                  <a href="tp-pdf/mise-en-situation.pdf" class="btn btn-pdf">📥 PDF</a>
+                                  <a href="evaluation/grille-evaluation.md" class="btn btn-secondary">📊 Grille</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>Évaluation formative</h3>
+                              <p>Exercices guidés, quiz de fin de journée, QCM de 20 questions, revues de code</p>
+                              <div class="links">
+                                  <a href="evaluation/qcm.md" class="btn">📋 QCM</a>
+                                  <a href="evaluation/README.md" class="btn btn-secondary">ℹ️ Modalités</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="section">
+                      <h2>📚 Ressources</h2>
+                      <div class="grid">
+                          <div class="card">
+                              <h3>🧾 Aide-mémoire</h3>
+                              <p>Cheatsheets à garder sous la main</p>
+                              <div class="links">
+                                  <a href="tp-pdf/cheatsheet-git.pdf" class="btn btn-secondary">Git</a>
+                                  <a href="tp-pdf/cheatsheet-docker.pdf" class="btn btn-secondary">Docker</a>
+                                  <a href="tp-pdf/cheatsheet-github-actions.pdf" class="btn btn-secondary">GitHub Actions</a>
+                                  <a href="tp-pdf/cheatsheet-linux-ssh-nginx.pdf" class="btn btn-secondary">Linux, SSH &amp; Nginx</a>
+                                  <a href="ressources/glossaire.md" class="btn btn-secondary">Glossaire</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>🛠️ Poste &amp; lab</h3>
+                              <p>Installation du poste, lab et runner GitHub Actions</p>
+                              <div class="links">
+                                  <a href="tp-pdf/setup-poste.pdf" class="btn">Installer son poste</a>
+                                  <a href="ressources/lab/README.md" class="btn btn-secondary">Lab</a>
+                                  <a href="ressources/lab/runner/README.md" class="btn btn-secondary">Runner</a>
+                                  <a href="demos/README.md" class="btn btn-secondary">Démos</a>
+                              </div>
+                          </div>
+                          <div class="card">
+                              <h3>📖 Documentation officielle</h3>
+                              <p>Références des outils du cours</p>
+                              <div class="links">
+                                  <a href="https://git-scm.com/book/fr/v2" class="btn" target="_blank">Pro Git (FR)</a>
+                                  <a href="https://docs.docker.com/" class="btn" target="_blank">Docker</a>
+                                  <a href="https://docs.github.com/fr/actions" class="btn" target="_blank">GitHub Actions</a>
+                                  <a href="https://nginx.org/en/docs/" class="btn" target="_blank">Nginx</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <footer>
+                      <p><strong>ForEach Academy</strong> — Titre professionnel Développeur Web et Web Mobile</p>
+                      <p style="margin-top: 1rem; font-size: 0.9rem; color: #999;">
+                          ⚙️ Site généré automatiquement avec GitHub Actions et Marp CLI
+                      </p>
+                  </footer>
+              </div>
+          </body>
+          </html>
+          HTML
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './public'
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

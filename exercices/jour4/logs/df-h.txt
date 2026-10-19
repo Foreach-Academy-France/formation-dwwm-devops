@@ -1,0 +1,46 @@
+# Commandes lancées sur le poste qui héberge la stack taskflow-prod (le « serveur »)
+
+$ df -h /
+Sys. de fichiers  Taille Utilisé Dispo Uti% Monté sur
+/dev/sda2            62G     62G     0 100% /
+
+$ docker system df
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          9         4         2.31GB    1.12GB (48%)
+Containers      4         4         1.2MB     0B (0%)
+Local Volumes   2         1         412MB     0B (0%)
+Build Cache     0         0         0B        0B
+
+$ du -sh ~/taskflow-prod/* | sort -h
+4,0K    /home/alice/taskflow-prod/backup.sh
+4,0K    /home/alice/taskflow-prod/compose.prod.yaml
+4,0K    /home/alice/taskflow-prod/deploy.sh
+8,0K    /home/alice/taskflow-prod/certs
+8,0K    /home/alice/taskflow-prod/nginx
+53G     /home/alice/taskflow-prod/backups
+
+$ ls -1 ~/taskflow-prod/backups | wc -l
+1056
+
+$ ls -lh ~/taskflow-prod/backups | head -4
+total 53G
+-rw-r--r-- 1 alice alice 52M  11 oct.  09:00 taskflow-20261011-090001.sql
+-rw-r--r-- 1 alice alice 52M  11 oct.  09:15 taskflow-20261011-091501.sql
+-rw-r--r-- 1 alice alice 52M  11 oct.  09:30 taskflow-20261011-093001.sql
+
+$ ls -lh ~/taskflow-prod/backups | tail -4
+-rw-r--r-- 1 alice alice 52M  22 oct.  09:00 taskflow-20261022-090001.sql
+-rw-r--r-- 1 alice alice 52M  22 oct.  09:15 taskflow-20261022-091501.sql
+-rw-r--r-- 1 alice alice  21M  22 oct.  09:31 taskflow-20261022-093001.sql
+-rw-r--r-- 1 alice alice    0  22 oct.  09:45 taskflow-20261022-094501.sql
+
+$ crontab -l
+# Sauvegarde TaskFlow (mise en place le 11/10 « pour tester » après l'import du jeu de test
+# de 400 000 tâches ; à remettre à 1 fois par nuit)
+*/15 * * * * /home/alice/taskflow-prod/backup.sh >> /home/alice/taskflow-prod/backups/backup.log 2>&1
+
+$ cat ~/taskflow-prod/backup.sh
+#!/usr/bin/env bash
+cd /home/alice/taskflow-prod
+docker compose -p taskflow-prod -f compose.prod.yaml exec -T db \
+  pg_dump -U taskflow -d taskflow > backups/taskflow-$(date +%Y%m%d-%H%M%S).sql

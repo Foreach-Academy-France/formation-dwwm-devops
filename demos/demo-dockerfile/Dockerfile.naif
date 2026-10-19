@@ -1,0 +1,20 @@
+# =============================================================================
+# Dockerfile NAÏF — fonctionne… mais cumule les mauvaises pratiques.
+# À montrer en premier, puis comparer avec « Dockerfile » (optimisé).
+# =============================================================================
+
+# ❌ Image complète Debian (~1 Go) alors qu'on n'a besoin que de Node
+FROM docker.io/library/node:20
+
+WORKDIR /app
+
+# ❌ On copie TOUT le dossier (y compris .env, gros fichiers, node_modules local…)
+#    ET avant l'installation : la moindre modif du code invalide le cache de npm install
+COPY . .
+
+# ❌ npm install (pas reproductible) + dépendances de développement (nodemon…)
+RUN npm install
+
+# ❌ Pas de USER : le processus tourne en root dans le conteneur
+# ❌ Forme « shell » : npm ne relaie pas bien le signal d'arrêt (docker stop attend 10 s)
+CMD npm start

@@ -1,0 +1,22 @@
+# docker compose -p taskflow-prod logs db --since 2026-10-22T07:00:00 (extrait)
+2026-10-22 07:15:01.112 UTC [27] LOG:  checkpoint starting: time
+2026-10-22 07:15:03.480 UTC [27] LOG:  checkpoint complete: wrote 21 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.105 s, sync=0.011 s, total=2.369 s
+2026-10-22 07:41:27.385 UTC [4121] ERROR:  could not extend file "base/16384/16390": No space left on device
+2026-10-22 07:41:27.385 UTC [4121] HINT:  Check free disk space.
+2026-10-22 07:41:27.385 UTC [4121] STATEMENT:  INSERT INTO tasks (title) VALUES ($1) RETURNING id, title, done, created_at
+2026-10-22 07:41:35.900 UTC [4123] ERROR:  could not extend file "base/16384/16390": No space left on device
+2026-10-22 07:41:35.900 UTC [4123] HINT:  Check free disk space.
+2026-10-22 07:41:35.900 UTC [4123] STATEMENT:  INSERT INTO tasks (title) VALUES ($1) RETURNING id, title, done, created_at
+2026-10-22 07:42:10.141 UTC [4130] ERROR:  could not write to file "pg_wal/xlogtemp.88": No space left on device
+2026-10-22 07:42:10.141 UTC [4130] STATEMENT:  UPDATE tasks SET done = NOT done WHERE id = $1 RETURNING id, title, done, created_at
+2026-10-22 07:46:58.702 UTC [27] PANIC:  could not write to file "pg_wal/xlogtemp.27": No space left on device
+2026-10-22 07:46:58.760 UTC [1] LOG:  checkpointer process (PID 27) was terminated by signal 6: Aborted
+2026-10-22 07:46:58.760 UTC [1] LOG:  terminating any other active server processes
+2026-10-22 07:46:58.771 UTC [1] LOG:  all server processes terminated; reinitializing
+2026-10-22 07:46:58.802 UTC [1] LOG:  shutting down because restart_after_crash is off
+2026-10-22 07:46:58.815 UTC [1] LOG:  database system is shut down
+2026-10-22 07:47:00.418 UTC [1] FATAL:  could not write lock file "postmaster.pid": No space left on device
+2026-10-22 07:47:02.611 UTC [1] FATAL:  could not write lock file "postmaster.pid": No space left on device
+2026-10-22 07:47:06.903 UTC [1] FATAL:  could not write lock file "postmaster.pid": No space left on device
+2026-10-22 07:47:15.240 UTC [1] FATAL:  could not write lock file "postmaster.pid": No space left on device
+2026-10-22 07:47:31.874 UTC [1] FATAL:  could not write lock file "postmaster.pid": No space left on device

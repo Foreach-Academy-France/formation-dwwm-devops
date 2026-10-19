@@ -1,0 +1,52 @@
+# =============================================================================
+# compose.yaml de TaskFlow — À COMPLÉTER (exercice 3.2)
+# Remplacez chaque ___ (trois tirets bas) par la bonne valeur.
+# Les numéros (1) à (14) renvoient aux questions de l'énoncé.
+# À placer à la racine du dépôt taskflow (à côté de api/ et front/).
+# =============================================================================
+name: taskflow
+
+services:
+  db:
+    image: ___                                   # (1) Postgres 16, variante alpine, nom complet
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?à définir dans .env}
+      POSTGRES_DB: taskflow
+    volumes:
+      - ___:/var/lib/postgresql/data             # (2) volume nommé déclaré en bas du fichier
+    healthcheck:
+      test: ["CMD-SHELL", "___ -U taskflow -d taskflow"]   # (3) outil Postgres qui teste si la base accepte les connexions
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # (4) Faut-il publier le port 5432 ? Répondez dans l'énoncé (pas de ligne à ajouter ici).
+
+  api:
+    build: ___                                   # (5) dossier qui contient le Dockerfile de l'API
+    environment:
+      PORT: ___                                  # (6) port d'écoute de l'API
+      DATABASE_URL: postgres://taskflow:${POSTGRES_PASSWORD}@___:5432/taskflow   # (7) hôte de la base
+      APP_ENV: local
+      APP_VERSION: ${APP_VERSION:-dev}
+    depends_on:
+      db:
+        condition: ___                           # (8) attendre que la base soit EN BONNE SANTÉ, pas juste démarrée
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/___ || exit 1"]   # (9) route de santé de l'API
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: ___                                 # (10) redémarrer sauf si on l'a arrêté volontairement
+
+  front:
+    build: ./front
+    ports:
+      - "___:80"                                 # (11) port sur VOTRE machine : http://localhost:8080
+    depends_on:
+      ___:                                       # (12) service dont dépend le front
+        condition: service_healthy
+    restart: unless-stopped
+
+___:                                             # (13) clé de premier niveau qui déclare les volumes
+  ___:                                           # (14) même nom qu'en (2)

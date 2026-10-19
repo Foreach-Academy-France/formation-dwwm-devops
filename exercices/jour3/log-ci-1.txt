@@ -1,0 +1,53 @@
+Run CI #41 — feat(api): ajoute la validation du titre (#18)
+Workflow: .github/workflows/ci.yml   Event: pull_request   Branch: feature/validation-titre
+Job: api (ubuntu-latest)
+
+2026-10-21T09:14:02.1184620Z ##[group]Run actions/checkout@v4
+2026-10-21T09:14:02.1185108Z with:
+2026-10-21T09:14:02.1185377Z   repository: alice-dwwm/taskflow
+2026-10-21T09:14:02.1185702Z   ref: refs/pull/18/merge
+2026-10-21T09:14:02.1186003Z ##[endgroup]
+2026-10-21T09:14:03.0412977Z Syncing repository: alice-dwwm/taskflow
+2026-10-21T09:14:03.9921420Z HEAD is now at 7c1e0a4 Merge 3f2b9d1 into 9a8e2c7
+2026-10-21T09:14:04.0533127Z ##[group]Run actions/setup-node@v4
+2026-10-21T09:14:04.0533618Z with:
+2026-10-21T09:14:04.0533880Z   node-version: 20
+2026-10-21T09:14:04.0534130Z   cache: npm
+2026-10-21T09:14:04.0534412Z   cache-dependency-path: api/package-lock.json
+2026-10-21T09:14:04.0534734Z ##[endgroup]
+2026-10-21T09:14:04.2281539Z Found in cache @ /opt/hostedtoolcache/node/20.18.0/x64
+2026-10-21T09:14:04.2309146Z ##[group]Environment details
+2026-10-21T09:14:04.6112093Z node: v20.18.0
+2026-10-21T09:14:04.6112617Z npm: 10.8.2
+2026-10-21T09:14:04.6113019Z ##[endgroup]
+2026-10-21T09:14:04.9017733Z Cache restored successfully
+2026-10-21T09:14:04.9123401Z ##[group]Run npm ci
+2026-10-21T09:14:04.9123843Z npm ci
+2026-10-21T09:14:04.9124151Z shell: /usr/bin/bash -e {0}
+2026-10-21T09:14:04.9124473Z ##[endgroup]
+2026-10-21T09:14:06.3317205Z npm error code EUSAGE
+2026-10-21T09:14:06.3324471Z npm error
+2026-10-21T09:14:06.3325187Z npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+2026-10-21T09:14:06.3325941Z npm error
+2026-10-21T09:14:06.3326303Z npm error Missing: zod@3.23.8 from lock file
+2026-10-21T09:14:06.3326724Z npm error
+2026-10-21T09:14:06.3327089Z npm error Clean install a project
+2026-10-21T09:14:06.3327419Z npm error
+2026-10-21T09:14:06.3327731Z npm error Usage:
+2026-10-21T09:14:06.3328040Z npm error npm ci
+2026-10-21T09:14:06.3328343Z npm error
+2026-10-21T09:14:06.3328658Z npm error Options:
+2026-10-21T09:14:06.3329130Z npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2026-10-21T09:14:06.3329735Z npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+2026-10-21T09:14:06.3330308Z npm error
+2026-10-21T09:14:06.3330621Z npm error aliases: clean-install, ic, install-clean, isntall-clean
+2026-10-21T09:14:06.3330993Z npm error
+2026-10-21T09:14:06.3331309Z npm error Run "npm help ci" for more info
+2026-10-21T09:14:06.3412088Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-10-21T09_14_05_002Z-debug-0.log
+2026-10-21T09:14:06.3570412Z ##[error]Process completed with exit code 1.
+2026-10-21T09:14:06.3688127Z Post job cleanup.
+
+--- Fichiers modifiés par la PR #18 (onglet « Files changed ») ---
+  M  api/package.json          (+1 −0)   "zod": "^3.23.8" ajouté dans "dependencies"
+  M  api/src/app.js            (+9 −2)
+  M  api/tests/app.test.js     (+14 −0)

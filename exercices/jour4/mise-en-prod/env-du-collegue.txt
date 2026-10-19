@@ -1,0 +1,7 @@
+# Contenu du fichier « .env » que le collègue a AJOUTÉ AU DÉPÔT dans la même PR #31
+# (git add .env && git commit -m "config prod").
+# Le fichier est reproduit ici sous un autre nom pour l'exercice.
+POSTGRES_PASSWORD=Taskflow2026!
+DATABASE_URL=postgres://taskflow:Taskflow2026!@db:5432/taskflow
+GHCR_TOKEN=ghp_EXEMPLE_FICTIF_jeton_personnel_GitHub
+APP_ENV=development

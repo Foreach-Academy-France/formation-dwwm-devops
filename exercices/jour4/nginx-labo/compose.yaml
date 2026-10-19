@@ -1,0 +1,26 @@
+# =============================================================================
+# Labo de l'exercice 4.1 : un « front » factice + le conteneur proxy à configurer.
+# Reproduit la partie réseau de la stack taskflow-prod, sans base ni API.
+#   1. bash gen-cert.sh                   (certificat auto-signé dans ./certs/)
+#   2. cp ../taskflow-casse.conf taskflow.conf
+#   3. docker compose up -d
+#   4. docker compose exec proxy nginx -t
+# Ports différents de la vraie stack (80/443) pour pouvoir les faire tourner ensemble.
+# =============================================================================
+name: nginx-labo
+
+services:
+  front:
+    # Remplace l'image ghcr.io/<owner>/taskflow-front : un simple Nginx qui écoute sur 80
+    image: docker.io/library/nginx:1.27-alpine
+
+  proxy:
+    image: docker.io/library/nginx:1.27-alpine
+    ports:
+      - "${HTTP_PORT:-8880}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./taskflow.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - front

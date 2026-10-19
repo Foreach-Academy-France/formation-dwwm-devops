@@ -1,0 +1,39 @@
+# compose.prod.yaml proposé par un collègue dans la PR #31 « prod : on y va ! »
+# Exercice 4.3 : passez-le au crible de la checklist de mise en production.
+name: taskflow-prod
+
+services:
+  db:
+    image: docker.io/library/postgres
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: Taskflow2026!
+      POSTGRES_DB: taskflow
+    ports:
+      - "5432:5432"
+
+  api:
+    image: ghcr.io/alice-dwwm/taskflow-api:latest
+    environment:
+      DATABASE_URL: postgres://taskflow:Taskflow2026!@db:5432/taskflow
+      APP_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  front:
+    image: ghcr.io/alice-dwwm/taskflow-front:latest
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+  proxy:
+    image: docker.io/library/nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/taskflow.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs
