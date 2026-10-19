@@ -391,9 +391,9 @@ Dernière marche : **aucun humain** entre le merge et la production.
 |---|---|---|---|
 | **dev** (local) | Écrire et essayer le code | Le développeur | Votre poste, `docker compose up` |
 | **test** / *staging* | Vérifier dans des conditions proches de la prod | L'équipe, la CI, le client | Le pipeline GitHub Actions |
-| **prod** | Servir les vrais utilisateurs | Tout le monde | Le « VPS » du lab, en HTTPS |
+| **prod** | Servir les vrais utilisateurs | Tout le monde | Une stack Docker séparée sur votre poste (`taskflow-prod`), en HTTPS |
 
-- **VPS** (*Virtual Private Server*) : un serveur virtuel loué chez un hébergeur
+- **VPS** (*Virtual Private Server*) : un serveur virtuel loué chez un hébergeur — ce qu'on utiliserait en vrai, vu en théorie au jour 4
 - Règle d'or : les environnements doivent être **le plus semblables possible** — c'est ce que Docker va permettre
 
 ---
@@ -453,30 +453,32 @@ Dernière marche : **aucun humain** entre le merge et la production.
 | Environnement reproductible | Docker + Docker Compose | Règle le « ça marche sur ma machine » |
 | CI/CD | GitHub Actions | Gratuit, intégré au dépôt |
 | Registre d'images | ghcr.io (GitHub Container Registry) | Gratuit, aucun compte supplémentaire |
-| Serveur | « VPS » simulé dans un conteneur | Les vrais gestes (SSH, Nginx…) sans payer de serveur |
+| Production | Stack Compose locale + Nginx HTTPS + runner GitHub Actions sur votre poste | Les vrais gestes de mise en prod sans payer de serveur |
 | Supervision | `docker logs`, healthchecks, Uptime Kuma | Simple, suffisant pour une petite équipe |
 
-- **SSH** (*Secure Shell*) : connexion sécurisée à un serveur distant (jour 4)
+- **SSH** (*Secure Shell*) : connexion sécurisée à un serveur distant (vue en théorie au jour 4)
 
 ---
 
 ## Le pipeline cible de TaskFlow (vendredi soir… sans stress)
 
 ```
- Développeur         GitHub                       GitHub Actions                    Serveur (VPS)
- ───────────         ──────                       ──────────────                    ─────────────
- git switch -c   ──▶ Pull Request ──▶ ci.yml : lint + tests + build  (J3)
- feature/x           revue d'un pair       │
-                     merge sur main  ◀── ✅ checks verts obligatoires
-                          │
-                          └──────▶ release.yml : images Docker ──▶ ghcr.io  (J3)
-                                         │
-                                         └──▶ job deploy ──SSH──▶ docker compose up -d  (J4)
-                                                                   Nginx HTTPS ◀── utilisateurs
-                                                                   /health ◀── Uptime Kuma
+ Développeur        GitHub                  GitHub Actions              Production (taskflow-prod)
+ ───────────        ──────                  ──────────────              ──────────────────────────
+ git switch -c ───▶ Pull Request ─────────▶ ci.yml (J3)
+ feature/x          revue d'un pair         lint + tests + build
+                        │                       │
+                    merge sur main ◀─────── checks verts
+                        │
+                        └─────────────────▶ release.yml (J3)
+                    ghcr.io ◀────────────── build + push des images
+                                                │
+                                                └─ job deploy (J4) ───▶ docker compose up -d
+                                                   (runner local)       Nginx HTTPS ◀── utilisateurs
+                                                                        /health ◀── Uptime Kuma
 ```
 
-> Aujourd'hui : comprendre ce schéma. Jeudi soir : chaque flèche fonctionnera **pour de vrai**.
+> Aujourd'hui : comprendre ce schéma. Jour 4 au soir : chaque flèche fonctionnera **pour de vrai**.
 
 ---
 
