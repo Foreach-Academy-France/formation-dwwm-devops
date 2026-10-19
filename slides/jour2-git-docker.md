@@ -681,8 +681,9 @@ Ouvrez http://localhost:8080 : « *Welcome to nginx!* »
   ┌─────────────────────────────────┐          ┌───────────────────────────┐
   │  navigateur                     │          │                           │
   │  http://localhost:8080 ─────────┼── 8080 ─▶│── 80 ──▶ nginx            │
-  │                                 │   -p 8080:80                         │
+  │                                 │          │                           │
   └─────────────────────────────────┘          └───────────────────────────┘
+                                     -p 8080:80
 ```
 
 - Un conteneur est **isolé** : sans `-p`, son port 80 est **inaccessible** depuis votre navigateur
@@ -1058,14 +1059,14 @@ Les données étaient dans la **couche lecture-écriture** du conteneur : `docke
 
 ```
                      CONTENEUR db
-          ┌───────────────────────────────────┐
+          ┌────────────────────────────────────┐
           │  /tmp/...  ──▶ couche du conteneur │  ← éphémère : perdu à docker rm
           │                                    │
           │  /var/lib/postgresql/data ─────────┼──▶ VOLUME NOMMÉ "taskflow-db-data"
           │                                    │    géré par Docker, survit au conteneur
           │                                    │
           │  /app/src ─────────────────────────┼──▶ BIND MOUNT  ./api/src
-          └───────────────────────────────────┘     un dossier de VOTRE machine
+          └────────────────────────────────────┘     un dossier de VOTRE machine
 ```
 
 | | Couche du conteneur | Volume nommé | Bind mount |
@@ -1141,7 +1142,7 @@ Restarting 'src/server.js'          ← après avoir sauvegardé app.js dans VS 
   │   ┌──────────────┐        ┌──────────────┐        ┌──────────────┐      │
   │   │   front      │ ─────▶ │    api       │ ─────▶ │     db       │      │
   │   │  nginx :80   │  http  │  node :3000  │  5432  │ postgres     │      │
-  │   │ 172.18.0.4   │ api:3000  172.18.0.3  │ db:5432│ 172.18.0.2   │      │
+  │   │ 172.18.0.4   │api:3000│ 172.18.0.3   │db:5432 │ 172.18.0.2   │      │
   │   └──────┬───────┘        └──────────────┘        └──────────────┘      │
   │          │                   DNS interne : "api" → 172.18.0.3           │
   └──────────┼──────────────────────────────────────────────────────────────┘
