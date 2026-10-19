@@ -286,9 +286,9 @@ Deux équipes, **deux objectifs opposés** : l'une veut changer, l'autre veut st
 
 ```
   Semaine 1          Semaine 2          Semaine 3          Le jour J
-  Amina ───────────────────────────────────────────┐
+  Alice ───────────────────────────────────────────┐
   (formulaire)                                     │
-  Bilal ───────────────────────────────────────────┼──▶  ON FUSIONNE TOUT
+  Bob ─────────────────────────────────────────────┼──▶  ON FUSIONNE TOUT
   (base de données)                                │     → 47 conflits
   Chloé ───────────────────────────────────────────┘     → l'appli ne démarre plus
   (design)                                               → 3 jours pour réparer
@@ -1010,9 +1010,9 @@ Deux personnes modifient **la même ligne** du même fichier, sur deux branches 
 
 ```
                         index.html, ligne 12
-  main          ──●──── <li>Amina</li>          ──●   (déjà fusionné)
+  main          ──●──── <li>Alice</li>          ──●   (déjà fusionné)
                    \
-  feature/bilal     ●── <li>Bilal</li>            ──▶ merge ? 💥 même ligne !
+  feature/bob       ●── <li>Bob</li>              ──▶ merge ? 💥 même ligne !
 ```
 
 - Ce n'est **pas** une erreur ni un bug : c'est Git qui refuse de deviner à votre place
@@ -1029,7 +1029,7 @@ Auto-merging index.html
 CONFLICT (content): Merge conflict in index.html
 Automatic merge failed; fix conflicts and then commit the result.
 $ git status
-On branch feature/bilal
+On branch feature/bob
 You have unmerged paths.
   (fix conflicts and run "git commit")
 Unmerged paths:
@@ -1045,9 +1045,9 @@ Unmerged paths:
 ```html
 <ul>
 <<<<<<< HEAD
-  <li>Bilal</li>
+  <li>Bob</li>
 =======
-  <li>Amina</li>
+  <li>Alice</li>
 >>>>>>> main
 </ul>
 ```
@@ -1074,8 +1074,8 @@ Ou éditez à la main. Résultat attendu, **sans aucun marqueur** :
 
 ```html
 <ul>
-  <li>Amina</li>
-  <li>Bilal</li>
+  <li>Alice</li>
+  <li>Bob</li>
 </ul>
 ```
 
@@ -1085,8 +1085,8 @@ Ou éditez à la main. Résultat attendu, **sans aucun marqueur** :
 
 ```console
 $ git add index.html
-$ git commit -m "merge: intègre main dans feature/bilal"
-[feature/bilal 2e3f4a5] merge: intègre main dans feature/bilal
+$ git commit -m "merge: intègre main dans feature/bob"
+[feature/bob 2e3f4a5] merge: intègre main dans feature/bob
 $ git push
 ```
 
@@ -1146,7 +1146,7 @@ Tout le monde ajoute **sa ligne** dans la **même** liste de `index.html` :
 
 ```html
 <ul class="promo">
-  <li><a href="cartes/amina.html">Amina</a></li>
+  <li><a href="cartes/alice.html">Alice</a></li>
   <!-- chacun ajoute sa ligne ICI -->
 </ul>
 ```

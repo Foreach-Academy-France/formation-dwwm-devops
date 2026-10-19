@@ -31,7 +31,7 @@ Tout le monde, mainteneur compris, ajoutera sa carte.
 Dans les commandes, remplacez :
 
 - `<mainteneur>` par le pseudo GitHub du mainteneur ;
-- `<prenom>` par **votre** prénom, en minuscules, sans accent (`amina`, `jean-baptiste`).
+- `<prenom>` par **votre** prénom, en minuscules, sans accent (`alice`, `jean-baptiste`).
 
 ---
 
@@ -139,7 +139,7 @@ git switch -c feature/carte-<prenom>
 
 ```console
 $ git branch
-* feature/carte-amina
+* feature/carte-alice
   main
 ```
 
@@ -184,7 +184,7 @@ git commit -m "feat: ajoute la carte de <Prénom>"
 
 ```console
 $ git log --oneline
-8c1d2e4 (HEAD -> feature/carte-amina) feat: ajoute la carte d'Amina
+8c1d2e4 (HEAD -> feature/carte-alice) feat: ajoute la carte d'Alice
 3f2a1c9 (origin/main, origin/HEAD, main) chore: initialise le site Promo DWWM
 ```
 
@@ -192,7 +192,7 @@ $ git log --oneline
 > - La carte s'affiche sans mise en forme : le lien vers la feuille de style doit rester `../style.css` (la carte est
 >   dans un sous-dossier).
 > - Le lien de l'accueil mène à une page « introuvable » : vérifiez l'orthographe **et la casse** du nom de fichier
->   (`amina.html` et `Amina.html` sont deux fichiers différents sous Linux).
+>   (`alice.html` et `Alice.html` sont deux fichiers différents sous Linux).
 
 > **Pourquoi ?** Tout le monde modifie **la même zone** de `index.html` : c'est voulu, c'est ce qui provoquera le
 > conflit de l'étape 7.
@@ -274,9 +274,9 @@ Ouvrez `index.html` dans VS Code. Vous voyez :
 
 ```html
 <<<<<<< HEAD
-    <li><a href="cartes/bilal.html">Bilal</a></li>
+    <li><a href="cartes/bob.html">Bob</a></li>
 =======
-    <li><a href="cartes/amina.html">Amina</a></li>
+    <li><a href="cartes/alice.html">Alice</a></li>
 >>>>>>> main
 ```
 
@@ -287,8 +287,8 @@ Ici, il faut garder **les deux lignes**. Cliquez sur *Accept Both Changes* (au-d
 supprimez les trois lignes de marqueurs à la main. Résultat :
 
 ```html
-    <li><a href="cartes/bilal.html">Bilal</a></li>
-    <li><a href="cartes/amina.html">Amina</a></li>
+    <li><a href="cartes/bob.html">Bob</a></li>
+    <li><a href="cartes/alice.html">Alice</a></li>
 ```
 
 Vérifiez qu'il ne reste aucun marqueur, ouvrez la page dans le navigateur, puis terminez la fusion :
@@ -374,10 +374,10 @@ git log --oneline --graph --all -n 8     # APRÈS : votre commit est posé au-de
 
 ```console
 $ git rebase origin/main
-Successfully rebased and updated refs/heads/feature/style-amina.
+Successfully rebased and updated refs/heads/feature/style-alice.
 $ git log --oneline --graph -n 3
-* 5e6f7a8 (HEAD -> feature/style-amina) feat: complète la carte d'Amina
-* 9b0c1d2 (origin/main) feat: complète la carte de Bilal
+* 5e6f7a8 (HEAD -> feature/style-alice) feat: complète la carte d'Alice
+* 9b0c1d2 (origin/main) feat: complète la carte de Bob
 * 4d5e6f7 Merge pull request #3 from .../feature/carte-chloe
 ```
 

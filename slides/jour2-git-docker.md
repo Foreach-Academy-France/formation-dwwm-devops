@@ -86,14 +86,14 @@ Formateur : Fabrice Claeys
 
 ## Le problème : `main` a avancé sans vous
 
-Vous avez créé `feature/carte-amina` lundi. Entre-temps, deux collègues ont fusionné leur travail.
+Vous avez créé `feature/carte-alice` lundi. Entre-temps, deux collègues ont fusionné leur travail.
 
 ```
                   C ───── D            main  (les collègues)
                  /
         A ───── B
                  \
-                  E ───── F            feature/carte-amina  (vous)
+                  E ───── F            feature/carte-alice  (vous)
 ```
 
 Avant d'ouvrir (ou de fusionner) votre PR, vous devez récupérer `C` et `D`. Deux solutions :
@@ -109,7 +109,7 @@ Avant d'ouvrir (ou de fusionner) votre PR, vous devez récupérer `C` et `D`. De
                  /                     ╲
         A ───── B                       ╲
                  \                       ▼
-                  E ───── F ─────────── M      feature/carte-amina
+                  E ───── F ─────────── M      feature/carte-alice
 ```
 
 - ✅ Simple, ne réécrit **rien** : sans danger
@@ -118,9 +118,9 @@ Avant d'ouvrir (ou de fusionner) votre PR, vous devez récupérer `C` et `D`. De
 
 ```console
 $ git log --oneline --graph
-*   9a1b2c3 Merge branch 'main' into feature/carte-amina
+*   9a1b2c3 Merge branch 'main' into feature/carte-alice
 |\
-| * 5d6e7f8 feat: ajoute la carte de Bilal
+| * 5d6e7f8 feat: ajoute la carte de Bob
 ```
 
 ---
@@ -146,14 +146,14 @@ $ git log --oneline --graph
 ## Rebase : les commandes
 
 ```console
-$ git switch feature/carte-amina
+$ git switch feature/carte-alice
 $ git fetch origin
 $ git rebase origin/main
-Successfully rebased and updated refs/heads/feature/carte-amina.
+Successfully rebased and updated refs/heads/feature/carte-alice.
 $ git log --oneline --graph
-* 3f2a1bc (HEAD -> feature/carte-amina) feat: ajoute le style de la carte d'Amina
-* 8e7d6c5 feat: ajoute la carte d'Amina
-* 5d6e7f8 (origin/main) feat: ajoute la carte de Bilal
+* 3f2a1bc (HEAD -> feature/carte-alice) feat: ajoute le style de la carte d'Alice
+* 8e7d6c5 feat: ajoute la carte d'Alice
+* 5d6e7f8 (origin/main) feat: ajoute la carte de Bob
 * 1a2b3c4 feat: ajoute la carte de Chloé
 ```
 
@@ -182,7 +182,7 @@ $ git log --oneline --graph
 $ git rebase origin/main
 Auto-merging index.html
 CONFLICT (content): Merge conflict in index.html
-error: could not apply 8e7d6c5... feat: ajoute la carte d'Amina
+error: could not apply 8e7d6c5... feat: ajoute la carte d'Alice
 hint: Resolve all conflicts manually, mark them as resolved with
 hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
 ```
@@ -192,7 +192,7 @@ Même méthode qu'hier, mais on **continue** au lieu de commiter :
 ```console
 $ git add index.html                # après avoir résolu dans VS Code
 $ git rebase --continue             # rejoue le commit suivant
-Successfully rebased and updated refs/heads/feature/carte-amina.
+Successfully rebased and updated refs/heads/feature/carte-alice.
 ```
 
 > Perdu ? `git rebase --abort` remet tout comme avant le rebase.
@@ -205,11 +205,11 @@ Successfully rebased and updated refs/heads/feature/carte-amina.
 
 ```
   Chez vous, après rebase :     A ── B ── C ── D ── E' ── F'
-  Chez Bilal (même branche) :   A ── B ── E ── F ── G         ← il a construit G sur E et F
+  Chez Bob (même branche) :     A ── B ── E ── F ── G         ← il a construit G sur E et F
 ```
 
 - Le rebase **remplace** `E`, `F` par `E'`, `F'` : pour Git, ce sont des commits **différents**
-- Bilal se retrouve avec des doublons et des conflits incompréhensibles
+- Bob se retrouve avec des doublons et des conflits incompréhensibles
 - ✅ Rebaser **votre** branche, que **vous seul** utilisez : aucun problème
 
 ---
@@ -220,10 +220,10 @@ Vos commits ont changé de SHA : GitHub refuse un `git push` normal.
 
 ```console
 $ git push
- ! [rejected]        feature/carte-amina -> feature/carte-amina (non-fast-forward)
+ ! [rejected]        feature/carte-alice -> feature/carte-alice (non-fast-forward)
 hint: Updates were rejected because the tip of your current branch is behind
 $ git push --force-with-lease
- + 7c8d9e0...3f2a1bc feature/carte-amina -> feature/carte-amina (forced update)
+ + 7c8d9e0...3f2a1bc feature/carte-alice -> feature/carte-alice (forced update)
 ```
 
 - `--force-with-lease` : force **seulement si** personne n'a poussé entre-temps sur cette branche
@@ -303,7 +303,7 @@ Un **tag** est une étiquette **fixe** posée sur un commit (une branche, elle, 
 $ git tag -a v1.0.0 -m "Première version stable du site promo"
 $ git show v1.0.0 --no-patch
 tag v1.0.0
-Tagger: Amina Diallo <amina@example.com>
+Tagger: Alice Diallo <alice@example.com>
 Date:   Tue Oct 20 09:42:11 2026 +0200
 
 Première version stable du site promo
@@ -320,8 +320,8 @@ v1.0.0
 $ git push origin v1.0.0
  * [new tag]         v1.0.0 -> v1.0.0
 $ git log --oneline -3
-3f2a1bc (HEAD -> main, tag: v1.0.0, origin/main) feat: ajoute la carte d'Amina
-5d6e7f8 feat: ajoute la carte de Bilal
+3f2a1bc (HEAD -> main, tag: v1.0.0, origin/main) feat: ajoute la carte d'Alice
+5d6e7f8 feat: ajoute la carte de Bob
 1a2b3c4 feat: ajoute la carte de Chloé
 ```
 
@@ -445,7 +445,7 @@ $ git reset --hard HEAD~1        # on annule ce commit de test
 
 TaskFlow, chez trois personnes différentes :
 
-| | Poste d'Amina | Poste de Bilal | Serveur de prod |
+| | Poste d'Alice | Poste de Bob | Serveur de prod |
 |---|---|---|---|
 | Système | Windows 11 | macOS 14 | Ubuntu 24.04 |
 | Node.js | 20.11 | **18.19** | 20.15 |

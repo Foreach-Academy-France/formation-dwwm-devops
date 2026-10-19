@@ -21,8 +21,8 @@ Format : `<type>/<sujet-court>`, en minuscules, sans accent ni espace (des tiret
 
 | Type | Quand | Exemple |
 |---|---|---|
-| `feature/` | Ajout de contenu ou de fonctionnalité | `feature/carte-amina`, `feature/carte-jean-baptiste` |
-| `feature/` (style) | Modification visuelle de sa carte | `feature/style-amina` |
+| `feature/` | Ajout de contenu ou de fonctionnalité | `feature/carte-alice`, `feature/carte-jean-baptiste` |
+| `feature/` (style) | Modification visuelle de sa carte | `feature/style-alice` |
 | `fix/` | Correction d'une erreur | `fix/lien-casse-accueil` |
 | `docs/` | Documentation seulement | `docs/readme-installation` |
 
@@ -38,9 +38,9 @@ Format : `<type>: <description à l'impératif, en minuscules, sans point final>
 
 | Type | Usage | Exemple |
 |---|---|---|
-| `feat` | Nouveau contenu, nouvelle fonctionnalité | `feat: ajoute la carte d'Amina` |
+| `feat` | Nouveau contenu, nouvelle fonctionnalité | `feat: ajoute la carte d'Alice` |
 | `fix` | Correction | `fix: corrige le lien vers la carte de Jean-Baptiste` |
-| `style` | Mise en forme, CSS, sans changer le contenu | `style: change la couleur de l'avatar d'Amina` |
+| `style` | Mise en forme, CSS, sans changer le contenu | `style: change la couleur de l'avatar d'Alice` |
 | `docs` | Documentation (README, CONTRIBUTING) | `docs: précise la convention de nommage` |
 | `refactor` | Réorganisation sans changement visible | `refactor: regroupe les variables CSS` |
 | `chore` | Tâche annexe (configuration, outillage) | `chore: ajoute le modèle de Pull Request` |
@@ -82,7 +82,7 @@ Commentez **une ligne** en cliquant sur le `+` bleu dans la marge. Soyez précis
 
 | À éviter | À préférer |
 |---|---|
-| « C'est faux. » | « Le lien pointe vers `cartes/Amina.html` mais le fichier s'appelle `amina.html` : sous Linux, la casse compte. » |
+| « C'est faux. » | « Le lien pointe vers `cartes/Alice.html` mais le fichier s'appelle `alice.html` : sous Linux, la casse compte. » |
 | « Pas terrible le CSS. » | « Suggestion : utiliser `var(--color-accent)` plutôt que `#2f5bea`, pour rester cohérent avec le reste du site. » |
 
 Puis **Review changes** > *Comment* (remarque), *Request changes* (à corriger avant fusion) ou *Approve* (prêt à fusionner).

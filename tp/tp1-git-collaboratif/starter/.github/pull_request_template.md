@@ -1,6 +1,6 @@
 ## Description
 
-<!-- Que change cette Pull Request ? Exemple : « Ajoute la carte d'Amina et son lien sur l'accueil. » -->
+<!-- Que change cette Pull Request ? Exemple : « Ajoute la carte d'Alice et son lien sur l'accueil. » -->
 
 ## Type de changement
 
@@ -11,7 +11,7 @@
 
 ## Comment vérifier ?
 
-<!-- Exemple : « Ouvrir index.html, cliquer sur Amina, puis sur Retour. » -->
+<!-- Exemple : « Ouvrir index.html, cliquer sur Alice, puis sur Retour. » -->
 
 ## Checklist
 
