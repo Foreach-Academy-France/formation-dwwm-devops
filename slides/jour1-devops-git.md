@@ -41,8 +41,8 @@ Formateur : Fabrice Claeys
 | 10h45-11h00 | *Pause* |
 | 11h00-11h30 | **1.3 Panorama des outils** — une case par étape |
 | 11h30-12h30 | **TP 0** — Cartographie d'un pipeline |
-| 13h30-14h00 | **2.1 Git : rappels et modèle mental** |
-| 14h00-15h30 | **2.2 Branches et merge** · **2.3 Workflow d'équipe** (+ pause) |
+| 13h30-14h15 | **2.1 Les bases de Git** — modèle mental, premiers commits (exercice 1.1) |
+| 14h15-15h30 | **2.2 Branches et merge** · **2.3 Workflow d'équipe** (+ pause) |
 | 15h30-16h00 | **2.4 Conflits** |
 | 16h00-17h00 | **TP 1** — Projet collaboratif (suite demain) · récap et quiz |
 
@@ -544,11 +544,24 @@ Votre schéma du pipeline cible de TaskFlow doit faire apparaître :
 <!-- _class: lead -->
 # Après-midi — Git collaboratif
 
-**2.1 Rappels et modèle mental**
+**2.1 Les bases de Git**
 
 ---
 
-## Pourquoi Git ? (rappel)
+## Avant de commencer : votre poste est prêt ?
+
+| Vérification | Commande | Résultat attendu |
+|---|---|---|
+| Git installé | `git --version` | `git version 2.x` |
+| Identité configurée | `git config user.name && git config user.email` | vos nom et e-mail |
+| Clé SSH reconnue par GitHub | `ssh -T git@github.com` | `Hi <pseudo>! You've successfully authenticated…` |
+
+- Une ligne en échec ? On la règle **maintenant**, avec `ressources/setup-poste.md` : sans clé SSH, impossible de faire un `git push` au TP 1
+- **SSH** ici sert seulement à prouver à GitHub qui vous êtes, sans taper de mot de passe
+
+---
+
+## Pourquoi Git ?
 
 ```
   rapport.docx

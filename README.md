@@ -69,7 +69,7 @@ Plan détaillé bloc par bloc : [plan-cours.md](./plan-cours.md)
 | 10h45-11h15 | **Panorama des outils** |
 | 11h15-12h15 | **TP0 : Cartographie d'un pipeline** (étude de cas) |
 | **APRÈS-MIDI — Séquence 2 : Git collaboratif (1/2)** | |
-| 13h15-15h15 | Rappels, branches et merge, workflow d'équipe (GitHub Flow, Git Flow simplifié), Pull Request, revue de code, conflits |
+| 13h15-15h15 | Bases de Git, branches et merge, workflow d'équipe (GitHub Flow, Git Flow simplifié), Pull Request, revue de code, conflits |
 | 15h30-17h00 | **TP1 : Projet collaboratif** — branche feature, PR, revue, fusion, conflit |
 
 **Slides** : [Jour 1](./slides/jour1-devops-git.md) · **TP** : [TP0](./tp/tp0-cartographie-pipeline/) · [TP1](./tp/tp1-git-collaboratif/) · **Exercices** : [jour 1](./exercices/jour1/)

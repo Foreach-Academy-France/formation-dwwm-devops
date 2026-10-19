@@ -7,7 +7,7 @@ last_updated: 2026-10-19
 
 # Plan de cours — DWWM DevOps (4 jours, 28h)
 
-**Public :** apprenants du titre professionnel **Développeur Web et Web Mobile (DWWM, niveau 5 / Bac+2)**, souvent en reconversion ou en alternance. Ils savent faire une application web (HTML/CSS/JS, un back-end PHP ou Node), ont **utilisé** Git/GitHub (add/commit/push, parfois une branche) et ont des **bases Linux** (cd, ls, nano). Ils n'ont jamais écrit de Dockerfile, de workflow CI ni configuré de serveur.
+**Public :** apprenants du titre professionnel **Développeur Web et Web Mobile (DWWM, niveau 5 / Bac+2)**, souvent en reconversion ou en alternance. Ils savent faire une application web (HTML/CSS/JS, un back-end PHP ou Node), **découvrent** Git/GitHub pour la plupart (le programme le cite en prérequis, mais en pratique il faut repartir de zéro : modèle mental, premier commit, clé SSH) et ont des **bases Linux** (cd, ls, nano). Ils n'ont jamais écrit de Dockerfile, de workflow CI ni configuré de serveur.
 
 **Conséquences pédagogiques (différences avec les cours M2) :**
 - **Pas-à-pas guidé** : chaque étape de TP donne la commande, le résultat attendu, et un encadré « Si ça ne marche pas ». Les questions de réflexion viennent *après* que ça marche.
@@ -151,7 +151,7 @@ taskflow/
 
 ### Après-midi — S2 Git collaboratif, partie 1 (3h30)
 
-**Bloc 2.1 — Rappels et modèle mental (30 min)** : working dir / index / commit / remote ; `git log --oneline --graph` ; bons messages de commit (Conventional Commits) ; `.gitignore`
+**Bloc 2.1 — Les bases de Git (45 min)** : vérification du poste (`git config`, `ssh -T git@github.com`) ; working dir / index / commit / remote ; exercice 1.1 en direct (premiers commits) ; `git log --oneline --graph` ; bons messages de commit (Conventional Commits) ; `.gitignore`
 **Bloc 2.2 — Branches et merge (45 min)** : branche = pointeur ; `switch -c` ; fast-forward vs merge commit ; **démo** `demos/demo-git-branches/`
 **Bloc 2.3 — Workflow d'équipe (45 min)** : GitHub Flow (main toujours déployable) vs Git Flow simplifié (main / develop / feature/* / hotfix/*) ; Pull Request ; revue de code (quoi regarder, comment commenter avec bienveillance) ; protection de branche
 **Bloc 2.4 — Conflits (30 min)** : pourquoi, lecture des marqueurs, résolution dans VS Code ; **démo** `demos/demo-git-conflit/`

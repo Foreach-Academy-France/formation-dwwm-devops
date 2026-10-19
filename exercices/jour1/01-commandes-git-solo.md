@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Durée** | 20 min |
-| **Séquence** | S2 — Bloc 2.1 (rappels et modèle mental) et Bloc 2.2 (branches) |
+| **Séquence** | S2 — Bloc 2.1 (les bases de Git) et Bloc 2.2 (branches) |
 | **Prérequis** | Git installé (`git --version`), un terminal ouvert |
 | **Fichiers fournis** | aucun : vous partez d'un dossier vide |
 
