@@ -9,7 +9,7 @@
 
 ## Le scénario
 
-Mercredi 22 octobre, 9 h 50. Uptime Kuma envoie une alerte : **TaskFlow `/health` répond 503**. Des utilisateurs signalent depuis une dizaine de minutes : « La page s'affiche, mais je ne peux plus ajouter ni cocher de tâche. »
+Un mardi matin, 9 h 50. Uptime Kuma envoie une alerte : **TaskFlow `/health` répond 503**. Des utilisateurs signalent depuis une dizaine de minutes : « La page s'affiche, mais je ne peux plus ajouter ni cocher de tâche. »
 
 Personne n'a déployé depuis deux jours. Vous êtes d'astreinte. Vous avez récupéré les fichiers du dossier `logs/` sur le poste qui héberge la stack `taskflow-prod` :
 

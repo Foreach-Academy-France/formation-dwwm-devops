@@ -8,7 +8,7 @@
 
 ## Le scénario
 
-> Jeudi, 14h. Une PR vient d'être fusionnée ; le pipeline a déployé la nouvelle version. Au même moment, quelqu'un a
+> 14h. Une PR vient d'être fusionnée ; le pipeline a déployé la nouvelle version. Au même moment, quelqu'un a
 > modifié à la main le fichier `.env` de la production. Quelques minutes plus tard, les messages arrivent :
 > « La page s'affiche, mais la liste des tâches ne se charge plus », « J'ai une erreur 502 ».
 >

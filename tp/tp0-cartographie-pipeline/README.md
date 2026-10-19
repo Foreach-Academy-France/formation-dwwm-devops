@@ -131,7 +131,7 @@ Répondez par écrit, en citant le **numéro de ligne** qui justifie votre répo
 >   [`../../ressources/cheatsheet-github-actions.md`](../../ressources/cheatsheet-github-actions.md).
 
 > **Pourquoi ?** Savoir **lire** un workflow est la première compétence : en entreprise, vous arriverez sur des projets
-> où le pipeline existe déjà. Mercredi, vous écrirez le vôtre.
+> où le pipeline existe déjà. Au jour 3, vous écrirez le vôtre.
 
 ---
 
