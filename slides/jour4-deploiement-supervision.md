@@ -562,8 +562,8 @@ echo "$GHCR_PAT" | docker login ghcr.io -u votre-compte --password-stdin
 
 ```
  PR verte ──▶ merge ──▶ release.yml ┬─ job build  (ubuntu-latest) : images → ghcr.io
-                                     └─ job deploy ([self-hosted, lab]) : needs: build
-                                          copie → deploy.sh <sha> → smoke test /health
+                                    └─ job deploy ([self-hosted, lab]) : needs: build
+                                         copie → deploy.sh <sha> → smoke test /health
 ```
 
 > *Smoke test* (test de fumée) : vérification rapide après une mise en route — « est-ce que ça fume ? ».
