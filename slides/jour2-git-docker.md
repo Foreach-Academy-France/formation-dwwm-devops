@@ -327,7 +327,7 @@ $ git log --oneline -3
 
 - ⚠️ `git push` seul **n'envoie pas** les tags : il faut les pousser explicitement
 - Revenir voir le code d'une version : `git switch --detach v1.0.0`
-- Jeudi, la CI utilisera ces tags pour étiqueter les images Docker
+- Demain (jour 3), la CI utilisera ces tags pour étiqueter les images Docker
 
 ---
 
@@ -418,7 +418,7 @@ $ cd api && npm ci && npm test
 **Settings → Branches → Add branch protection rule** → *Branch name pattern* : `main`
 
 - ☑ *Require a pull request before merging*
-- ☐ *Require approvals* : décoché pour l'instant (vous êtes seul ; jeudi, votre binôme relira)
+- ☐ *Require approvals* : décoché pour l'instant (vous êtes seul pour l'instant ; plus tard, votre binôme relira)
 - ☑ *Do not allow bypassing the above settings*
 
 Vérification — ce push **doit** être refusé :
@@ -451,7 +451,7 @@ TaskFlow, chez trois personnes différentes :
 | Node.js | 20.11 | **18.19** | 20.15 |
 | PostgreSQL | 16 | **14** | 16 |
 | Variable `DATABASE_URL` | définie | **oubliée** | définie autrement |
-| Résultat | ✅ ça marche | ❌ erreur au démarrage | ❓ on verra vendredi… |
+| Résultat | ✅ ça marche | ❌ erreur au démarrage | ❓ on verra en prod… |
 
 Il faut un moyen d'emporter **l'application + tout son environnement**, identique partout.
 
@@ -544,7 +544,7 @@ Un **conteneur** est un **processus isolé** qui **partage le noyau** du systèm
 | « J'ai Node 18, pas 20 » | L'image de l'API **embarque** Node 20 |
 | « Comment j'installe Postgres 16 ? » | `docker run postgres:16-alpine` — c'est tout |
 | « Ça marche chez moi, pas en prod » | **La même image** tourne sur le poste, dans la CI et sur le serveur |
-| « Nouvel arrivant : 1 journée d'installation » | Jeudi : `git clone` + `docker compose up` = 5 minutes |
+| « Nouvel arrivant : 1 journée d'installation » | Demain : `git clone` + `docker compose up` = 5 minutes |
 | « Quelle version est en prod ? » | Image étiquetée `taskflow-api:1.4.0` ou par SHA de commit |
 
 ---
@@ -643,7 +643,7 @@ Nom complet d'une image : `registre/propriétaire/nom:tag`
 | `postgres:16-alpine` | Image officielle `postgres`, version 16, basée sur **Alpine** (Linux minimal, ~5 Mo) |
 | `node:20-alpine` | Node.js 20 sur Alpine |
 | `nginx:1.27-alpine` | Serveur web nginx 1.27 |
-| `ghcr.io/<vous>/taskflow-api:1.0.0` | Votre image, sur le registre de GitHub (jeudi) |
+| `ghcr.io/<vous>/taskflow-api:1.0.0` | Votre image, sur le registre de GitHub (demain) |
 | `nginx` (sans tag) | = `nginx:latest` : ⚠️ change dans le temps, à éviter en prod |
 
 ```console
@@ -1208,7 +1208,7 @@ ENV DATABASE_URL=postgres://taskflow:MotDePasseSuperSecret@db:5432/taskflow
 
 - Une image se **partage** (registre, collègues, serveur) : tout ce qu'elle contient est **lisible**
 - Même si une couche suivante « supprime » un fichier, il reste dans la couche précédente
-- ✅ Secrets passés **au lancement** (`-e`, `--env-file`) ; jeudi : secrets GitHub Actions ; vendredi : `.env` sur le serveur en `chmod 600`
+- ✅ Secrets passés **au lancement** (`-e`, `--env-file`) ; demain : secrets GitHub Actions ; jour 4 : `.env` de la prod en `chmod 600`
 
 > `.env` dans `.gitignore` **et** dans `.dockerignore`. Toujours.
 
