@@ -143,6 +143,14 @@ $ git log --oneline --graph
 
 ---
 
+## Le rebase, image par image
+
+![w:1150](img/rebase.svg)
+
+`E` et `F` sont **décollés** puis **rejoués** après `D` : `E′` et `F′` ont le même contenu, mais ce sont de **nouveaux** commits.
+
+---
+
 ## Rebase : les commandes
 
 ```console
