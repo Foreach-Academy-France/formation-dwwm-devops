@@ -824,6 +824,14 @@ Git crée un **commit de fusion** `M` qui a **deux parents**. L'historique garde
 
 ---
 
+## Les deux merges, image par image
+
+![w:1150](img/merge-ff-vs-fusion.svg)
+
+Même départ, mêmes commits `C` et `D` : seule différence, **`main` a-t-elle bougé** pendant ce temps ?
+
+---
+
 ## Fast-forward ou commit de fusion ?
 
 | | Fast-forward | Commit de fusion |

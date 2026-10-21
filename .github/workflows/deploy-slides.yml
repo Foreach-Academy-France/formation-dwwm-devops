@@ -90,6 +90,8 @@ jobs:
             [ -d "$dir" ] && cp -r "$dir" public/
           done
           cp README.md plan-cours.md public/
+          # Images des slides (référencées en relatif depuis public/slides/*.html)
+          [ -d slides/img ] && cp -r slides/img public/slides/
 
       - name: Create index.html
         run: |
