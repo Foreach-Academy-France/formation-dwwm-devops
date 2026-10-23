@@ -1,3 +1,4 @@
+[![CI](https://github.com/Foreach-Academy-France/formation-dwwm-devops/actions/workflows/deploy-slides.yml/badge.svg)](https://github.com/Foreach-Academy-France/formation-dwwm-devops/actions)
 # Formation DevOps — DWWM
 
 > Formation de 4 jours (28h) : de « ça marche sur ma machine » à « déployé automatiquement en HTTPS à chaque merge »
